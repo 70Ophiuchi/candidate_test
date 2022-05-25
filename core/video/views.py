@@ -13,7 +13,7 @@ from .models import Post
 def post_list(request: HttpRequest) -> HttpResponse:
     """Returns list of all posts."""
     
-    posts=None
+    posts=Post.objects.filter(status='published')
 
     context = {
         "posts": posts
@@ -25,7 +25,8 @@ def post_list(request: HttpRequest) -> HttpResponse:
 def post_detail(request: HttpRequest, slug:str) -> HttpResponse:
     """Returns post detail page."""
     try:
-        post=None
+        post=Post.objects.filter(slug=slug).first()
+        post.update(page_views=F("page_views") + 1)
     except Post.DoesNotExist:
         return HttpResponseNotFound(_("This element does not exist."))
 
